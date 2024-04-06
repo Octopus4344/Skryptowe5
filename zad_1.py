@@ -52,7 +52,7 @@ def get_pid(line):
 
 def get_description(line):
     desc= line.split(":")[3]
-    return desc[:2]
+    return desc[1:]
 
 
 if __name__ == "__main__":
