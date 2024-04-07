@@ -13,4 +13,3 @@ def get_user_from_log(log):
     except KeyError:
         print("No description")
         return None
-
