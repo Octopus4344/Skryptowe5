@@ -5,6 +5,25 @@ from zad_2_b import get_ipv4s_from_log
 from zad_2_c import get_user_from_log
 from zad_2_d import get_message_type
 import re
+import logging
+
+
+logger = logging.getLogger()
+
+logger.setLevel(logging.DEBUG)
+
+stdout_handler = logging.StreamHandler(sys.stdout)
+stderr_handler = logging.StreamHandler(sys.stderr)
+
+stdout_handler.setLevel(logging.INFO | logging.DEBUG | logging.WARNING)
+stderr_handler.setLevel(logging.ERROR | logging.CRITICAL)
+
+formatter = logging.Formatter('%(levelname)s: %(message)s')
+stdout_handler.setFormatter(formatter)
+stderr_handler.setFormatter(formatter)
+
+logger.addHandler(stdout_handler)
+logger.addHandler(stderr_handler)
 
 def file_reader(file_name):
     # analyzed_lines : List[Dict[]] = []
@@ -24,6 +43,7 @@ def file_reader(file_name):
 
 
 def line_analyzer(line) -> dict:
+    logger.debug("Przeczytano %d bajtów: %s", len(line), line)
     dictionary = dict()
     dictionary['time'] = get_time(line)
     dictionary['host_name'] = get_host_name(line)
@@ -32,7 +52,7 @@ def line_analyzer(line) -> dict:
     dictionary['description'] = get_description(line)
     dictionary['IPv4'] = get_ipv4s_from_log(dictionary)
     dictionary['user_name'] = get_user_from_log(dictionary)
-    dictionary['message_type'] = get_message_type(dictionary['description'])
+    dictionary['message_type'] = get_message_type(dictionary['description'], logger)
     return dictionary
 
 
