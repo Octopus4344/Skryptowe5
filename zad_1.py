@@ -1,6 +1,6 @@
 import sys
-from typing import List, Dict
 from datetime import datetime
+from typing import List, Dict
 
 
 def file_reader(file_name):
@@ -26,7 +26,7 @@ def line_analyzer(line) -> dict:
     dictionary['host_name'] = get_host_name(line)
     dictionary['app_component'] = get_app_component(line)
     dictionary['PID'] = get_pid(line)
-    dictionary['description'] =get_description(line)
+    dictionary['description'] = get_description(line)
     return dictionary
 
 
@@ -51,7 +51,7 @@ def get_pid(line):
 
 
 def get_description(line):
-    desc= line.split(":")[3]
+    desc = line.split(":")[3]
     return desc[1:]
 
 
