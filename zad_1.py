@@ -2,6 +2,7 @@ import sys
 from typing import List, Dict
 from datetime import datetime
 from zad_2_b import get_ipv4s_from_log
+from zad_2_c import get_user_from_log
 
 
 def file_reader(file_name):
@@ -29,6 +30,7 @@ def line_analyzer(line) -> dict:
     dictionary['PID'] = get_pid(line)
     dictionary['description'] = get_description(line)
     dictionary['IPv4'] = get_ipv4s_from_log(dictionary)
+    dictionary['user_name'] = get_user_from_log(dictionary)
     return dictionary
 
 
