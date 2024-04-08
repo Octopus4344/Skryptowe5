@@ -55,7 +55,7 @@ def get_stats_per_user(logs):
 
 
 def get_min_max_login(logs):
-    users_logs = group_logs_by_ip(logs)
+    users_logs = group_logs_by_user(logs)
 
     logger = logging.getLogger()
     # Disable console logging
@@ -134,6 +134,6 @@ if __name__ == "__main__":
     #     print(f"User: {user}, Mean: {stats[0]}, Stdev: {stats[1]}")
 
     # 4c
-    min_login, max_login = get_min_max_login(file_reader("test.txt"))
+    min_login, max_login = get_min_max_login(file_reader("SSH.log"))
     print(f"Min log-ins: {min_login}")
     print(f"Max log-ins: {max_login}")
