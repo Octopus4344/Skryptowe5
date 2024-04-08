@@ -14,16 +14,30 @@ def get_random_logs_from_user(logs, user, n):
     return random.sample(logs_from_user, min(n, len(logs_from_user)))
 
 
-def get_stats_global(logs):
-    connection_times = []
+def get_stats(logs):
     logger = logging.getLogger()
     # Disable console logging
     logging.disable(logging.CRITICAL)
 
+    connection_times = []
+    open_time, close_time = None, None
+
     for log in logs:
-        print(log)
-        if get_message_type(log["description"], logger) == LogMessageType.SUCCESSFUL_LOGIN:
-            break
+        message_type = get_message_type(log["description"], logger)
+
+        if message_type != LogMessageType.CONNECTION_CLOSED and not open_time:
+            open_time = log["time"]
+        elif message_type == LogMessageType.CONNECTION_CLOSED and open_time:
+            close_time = log["time"]
+            connection_times.append((close_time - open_time).total_seconds())
+            open_time, close_time = None, None
+
+    if len(connection_times) >= 2:
+        return statistics.mean(connection_times), statistics.stdev(connection_times)
+    elif len(connection_times) == 1:
+        return connection_times[0], 0
+    else:
+        return 0, 0
 
 
 def get_stats_per_user(logs):
@@ -31,33 +45,48 @@ def get_stats_per_user(logs):
     users_stats = {}
 
     logger = logging.getLogger()
-    logger.setLevel(logging.CRITICAL)
     # Disable console logging
     logging.disable(logging.CRITICAL)
 
     for user, logs in users_logs.items():
-        connection_times = []
-        open_time, close_time = None, None
+        users_stats[user] = get_stats(logs)
 
-        for log in logs:
-            message_type = get_message_type(log["description"], logger)
-
-            if message_type == LogMessageType.SUCCESSFUL_LOGIN:
-                open_time = log["time"]
-            if message_type == LogMessageType.CONNECTION_CLOSED:
-                close_time = log["time"]
-                if open_time and close_time:
-                    connection_times.append(close_time - open_time)
-                    open_time, close_time = None, None
-
-        if connection_times:
-            users_stats[user] = (statistics.mean(connection_times), statistics.stdev(connection_times))
-        else:
-            users_stats[user] = (0, 0)
+    return users_stats
 
 
 def get_min_max_login(logs):
-    pass
+    users_logs = group_logs_by_ip(logs)
+
+    logger = logging.getLogger()
+    # Disable console logging
+    logging.disable(logging.CRITICAL)
+
+    min_login = None
+    min_login_users = []
+    max_login = None
+    max_login_users = []
+
+    for user, logs in users_logs.items():
+        login_times = 0
+        for log in logs:
+            message_type = get_message_type(log["description"], logger)
+            print(message_type)
+            if message_type == LogMessageType.SUCCESSFUL_LOGIN:
+                login_times += 1
+
+        if min_login is None or login_times < min_login:
+            min_login = login_times
+            min_login_users = [user]
+        elif login_times == min_login:
+            min_login_users.append(user)
+
+        if max_login is None or login_times > max_login:
+            max_login = login_times
+            max_login_users = [user]
+        elif login_times == max_login:
+            max_login_users.append(user)
+
+    return min_login_users, max_login_users
 
 
 def group_logs_by_user(logs):
@@ -65,7 +94,7 @@ def group_logs_by_user(logs):
 
     for log in logs:
         user = get_user_from_log(log)
-        if user:
+        if user is not None:
             if user not in user_dict:
                 user_dict[user] = []
             user_dict[user].append(log)
@@ -78,20 +107,16 @@ def group_logs_by_ip(logs):
 
     for log in logs:
         ip = get_ipv4s_from_log(log)
-        if ip and len(ip) == 1:
+        if ip is not None and len(ip) == 1:
             index = ip[0]
             if index not in ips_dict:
                 ips_dict[index] = []
             ips_dict[index].append(log)
 
     for ip in ips_dict:
-        ips_dict[ip] = sorted(ips_dict[ip], key=lambda x: x["time"])
-        for log in ips_dict[ip]:
-            log_type = get_message_type(log["description"], logging.getLogger())
-            if log_type == LogMessageType.SUCCESSFUL_LOGIN or log_type == LogMessageType.CONNECTION_CLOSED:
-                if log["IPv4"] == "119.137.62.142":
-                    print(log)
-                print(log)
+        valid_logs = [log for log in ips_dict[ip] if log.get("time") is not None]
+
+        ips_dict[ip] = sorted(valid_logs, key=lambda x: x["time"])
 
     return ips_dict
 
@@ -101,8 +126,14 @@ if __name__ == "__main__":
     # for log in get_random_logs_from_user(file_reader("SSH_2k.log"), "matlab", 5):
     #     print(log)
 
-    # 4b
-    # get_stats_global(file_reader("SSH_2k.log"))
+    # 4b1
+    print(get_stats(file_reader("SSH_2k.log")))
+
+    # 4b2
+    # for user, stats in get_stats_per_user(file_reader("SSH.log")).items():
+    #     print(f"User: {user}, Mean: {stats[0]}, Stdev: {stats[1]}")
 
     # 4c
-    print(get_stats_per_user(file_reader("SSH_2k.log")))
+    min_login, max_login = get_min_max_login(file_reader("test.txt"))
+    print(f"Min log-ins: {min_login}")
+    print(f"Max log-ins: {max_login}")
