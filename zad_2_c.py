@@ -9,6 +9,10 @@ def get_user_from_log(log):
         if match:
             return match.group(1)
         else:
+            pattern = r'for (\S+)(?: \[.*\])?'
+            match = re.search(pattern, description)
+            if match:
+                return match.group(1)
             return None
     except KeyError:
         print("No description")
