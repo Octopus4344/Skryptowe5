@@ -51,5 +51,5 @@ def check_if_IPv4_already_on_the_list(address, logs):
 
 if __name__ == '__main__':
     list = zad_1.file_reader('plik.txt')
-    for line in brute_force_detector(list, timedelta(minutes=1), False):
+    for line in brute_force_detector(list, timedelta(hours=1), True):
         print(line)
