@@ -14,7 +14,7 @@ logger.setLevel(logging.DEBUG)
 stdout_handler = logging.StreamHandler(sys.stdout)
 stderr_handler = logging.StreamHandler(sys.stderr)
 
-stdout_handler.setLevel(logging.INFO | logging.DEBUG | logging.WARNING)
+stdout_handler.setLevel(logging.DEBUG)
 stderr_handler.setLevel(logging.ERROR | logging.CRITICAL)
 
 formatter = logging.Formatter('%(levelname)s: %(message)s')
