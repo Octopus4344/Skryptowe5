@@ -26,7 +26,6 @@ logger.addHandler(stderr_handler)
 
 
 def file_reader(file_name):
-    # analyzed_lines : List[Dict[]] = []
     analyzed_lines = []
     try:
         with open(file_name, "r") as file:
@@ -57,11 +56,6 @@ def line_analyzer(line) -> dict:
 
 
 def get_time(line):
-    # split_line = line.split()
-    # date = " ".join(split_line[:3])
-    # # rest = " ".join(split_line[3:])
-    # date_time = datetime.strptime(date, "%b %d %H:%M:%S")
-    # return date_time
     pattern = r'^(\w{3} \d{1,2} \d{2}:\d{2}:\d{2})'
     match = re.search(pattern, line)
     if match:
@@ -88,9 +82,6 @@ def get_app_component(line):
         return None
 
 
-# return line.split()[4].split("[")[0].strip()
-
-
 def get_pid(line):
     pattern = r'\[(\d+)\]:'
     match = re.search(pattern, line)
@@ -98,7 +89,6 @@ def get_pid(line):
         return match.group(1)
     else:
         return None
-    # return line.split()[4].split("[")[1].split("]")[0].strip()
 
 
 def get_description(line):
@@ -108,9 +98,6 @@ def get_description(line):
         return match.group(1)
     else:
         return None
-    # split_line = line.split(":")
-    # desc = " ".join(split_line[3:])
-    # return desc[1:]
 
 
 if __name__ == "__main__":
