@@ -11,9 +11,7 @@ def brute_force_detector(logs, max_interval: timedelta, single_user_name: bool):
             if log['message_type'] in (LogMessageType.OTHER,
                                        LogMessageType.CONNECTION_CLOSED,
                                        LogMessageType.SUCCESSFUL_LOGIN):
-                print(log['message_type'], "-prawidlowe logowanie")
                 continue
-            print(log['message_type'], "-nieudane logowanie")
             if len(log['IPv4']) == 0:
                 continue
             for address in log['IPv4']:
