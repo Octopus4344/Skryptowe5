@@ -1,5 +1,4 @@
 from zad_2_d import LogMessageType
-from datetime import datetime
 from datetime import timedelta
 import zad_1
 
