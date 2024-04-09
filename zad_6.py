@@ -29,6 +29,12 @@ def brute_force_detector(logs, max_interval: timedelta, single_user_name: bool):
                 else:
                     unsuccessful_logs.append(
                         {'IPv4': address, 'count': 1, 'user_name': log['user_name'], 'last_time_detected': log['time']})
+        i = 0
+        while i < len(unsuccessful_logs):
+            if unsuccessful_logs[i]['count'] == 1:
+                del unsuccessful_logs[i]
+            else:
+                i += 1
         return unsuccessful_logs
     except KeyError:
         print("Niewlasciwa lista logów")
