@@ -31,16 +31,14 @@ def brute_force_detector(logs, max_interval: timedelta, single_user_name: bool):
                 else:
                     unsuccessful_logs.append(
                         {'IPv4': address, 'count': 1, 'user_name': log['user_name'], 'last_time_detected': log['time']})
-        i = 0
-        while i < len(unsuccessful_logs):
-            if unsuccessful_logs[i]['count'] == 1:
-                del unsuccessful_logs[i]
-            else:
-                i += 1
-        return unsuccessful_logs
+        return remove_single_attempts(unsuccessful_logs)
     except KeyError:
         print("Niewlasciwa lista logów")
         return unsuccessful_logs
+
+
+def remove_single_attempts(unsuccessful_logs):
+    return [log for log in unsuccessful_logs if log['count'] >1]
 
 
 def check_if_IPv4_already_on_the_list(address, logs):
