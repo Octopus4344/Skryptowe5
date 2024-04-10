@@ -104,7 +104,8 @@ def zad6(max_interval: int = 1, single_user_name: bool = False):
     """
     logs = file_reader(logfile_path["path"])
     for log in brute_force_detector(logs, timedelta(max_interval), single_user_name):
-        print(log)
+        for key, value in log.items():
+            print(f"{key}: {value}")
 
 
 @app.callback()
