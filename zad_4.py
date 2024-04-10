@@ -15,15 +15,11 @@ def get_random_logs_from_user(logs, user, n):
 
 
 def get_stats(logs):
-    logger = logging.getLogger()
-    # Disable console logging
-    logging.disable(logging.CRITICAL)
-
     connection_times = []
     open_time, close_time = None, None
 
     for log in logs:
-        message_type = get_message_type(log["description"], logger)
+        message_type = get_message_type(log["description"], logging.getLogger())
 
         if message_type == LogMessageType.CONNECTION_OPENED and open_time is None:
             open_time = log["time"]
@@ -55,10 +51,6 @@ def get_stats_per_user(logs):
 def get_min_max_login(logs):
     users_logs = group_logs_by_user(logs)
 
-    logger = logging.getLogger()
-    # Disable console logging
-    logging.disable(logging.CRITICAL)
-
     min_login = None
     min_login_users = []
     max_login = None
@@ -67,7 +59,7 @@ def get_min_max_login(logs):
     for user, logs in users_logs.items():
         login_times = 0
         for log in logs:
-            message_type = get_message_type(log["description"], logger)
+            message_type = get_message_type(log["description"], logging.getLogger())
             if message_type == LogMessageType.SUCCESSFUL_LOGIN:
                 login_times += 1
 
@@ -119,6 +111,8 @@ def group_logs_by_ip(logs):
 
 
 if __name__ == "__main__":
+    logging.disable(logging.CRITICAL)
+
     # 4a
     # for log in get_random_logs_from_user(file_reader("SSH_2k.log"), "matlab", 5):
     #     print(log)
@@ -127,8 +121,8 @@ if __name__ == "__main__":
     print(get_stats(file_reader("SSH_2k.log")))
 
     # 4b2
-    for user, stats in get_stats_per_user(file_reader("SSH.log")).items():
-        print(f"User: {user}, Mean: {stats[0]}, Stdev: {stats[1]}")
+    # for user, stats in get_stats_per_user(file_reader("SSH.log")).items():
+    #     print(f"User: {user}, Mean: {stats[0]}, Stdev: {stats[1]}")
 
     # 4c
     # min_login, max_login = get_min_max_login(file_reader("SSH.log"))
