@@ -27,7 +27,7 @@ def get_message_type(description, logger: logging.Logger):
     elif re.search(r'possible break-in attempt', description, re.IGNORECASE):
         logger.critical("Próba włamania w: %s", description)
         return LogMessageType.BREAK_IN_ATTEMPT
-    elif re.search(r'closed', description, re.IGNORECASE) or re.search(r'received disconnect', description, re.IGNORECASE):
+    elif re.search(r'closed', description, re.IGNORECASE):
         logger.info("Zamknięcie połączenia w: %s", description)
         return LogMessageType.CONNECTION_CLOSED
     elif re.search(r'accepted', description, re.IGNORECASE):

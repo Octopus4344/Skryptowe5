@@ -25,9 +25,9 @@ def get_stats(logs):
     for log in logs:
         message_type = get_message_type(log["description"], logger)
 
-        if message_type != LogMessageType.CONNECTION_CLOSED and not open_time:
+        if message_type == LogMessageType.CONNECTION_OPENED and open_time is None:
             open_time = log["time"]
-        elif message_type == LogMessageType.CONNECTION_CLOSED and open_time:
+        elif message_type == LogMessageType.CONNECTION_CLOSED and open_time is not None:
             close_time = log["time"]
             connection_times.append((close_time - open_time).total_seconds())
             open_time, close_time = None, None
@@ -41,15 +41,13 @@ def get_stats(logs):
 
 
 def get_stats_per_user(logs):
-    users_logs = group_logs_by_ip(logs)
+    users_logs = group_logs_by_user(logs)
     users_stats = {}
 
-    logger = logging.getLogger()
-    # Disable console logging
-    logging.disable(logging.CRITICAL)
-
     for user, logs in users_logs.items():
-        users_stats[user] = get_stats(logs)
+        stats = get_stats(logs)
+        if stats != (0, 0):
+            users_stats[user] = stats
 
     return users_stats
 
@@ -129,10 +127,10 @@ if __name__ == "__main__":
     print(get_stats(file_reader("SSH_2k.log")))
 
     # 4b2
-    # for user, stats in get_stats_per_user(file_reader("SSH.log")).items():
-    #     print(f"User: {user}, Mean: {stats[0]}, Stdev: {stats[1]}")
+    for user, stats in get_stats_per_user(file_reader("SSH.log")).items():
+        print(f"User: {user}, Mean: {stats[0]}, Stdev: {stats[1]}")
 
     # 4c
-    min_login, max_login = get_min_max_login(file_reader("SSH.log"))
-    print(f"Min log-ins: {min_login}")
-    print(f"Max log-ins: {max_login}")
+    # min_login, max_login = get_min_max_login(file_reader("SSH.log"))
+    # print(f"Min log-ins: {min_login}")
+    # print(f"Max log-ins: {max_login}")

@@ -7,7 +7,7 @@ import typer
 from zad_1 import file_reader
 from zad_2_b import get_ipv4s_from_log
 from zad_2_c import get_user_from_log
-from zad_2_d import get_message_type
+from zad_2_d import get_message_type, LogMessageType
 from zad_4 import get_min_max_login, get_random_logs_from_user, get_stats, get_stats_per_user
 from zad_6 import brute_force_detector
 
@@ -54,7 +54,8 @@ def zad2d():
     """
     logs = file_reader(logfile_path["path"])
     for line in logs:
-        print(get_message_type(line["description"], logging.getLogger()))
+        if get_message_type(line["description"], logging.getLogger()) == LogMessageType.CONNECTION_OPENED:
+            print(get_message_type(line["description"], logging.getLogger()))
 
 
 @app.command("zad4a")
@@ -110,7 +111,6 @@ def zad6(max_interval: int = 1, single_user_name: bool = False):
 
 @app.callback()
 def main(logfile: str = "SSH_2k.log", loglevel: LogLevels = LogLevels.NONE):
-
     if loglevel == LogLevels.NONE:
         logging.disable(logging.CRITICAL + 1)
     elif loglevel == LogLevels.DEBUG:
@@ -125,7 +125,6 @@ def main(logfile: str = "SSH_2k.log", loglevel: LogLevels = LogLevels.NONE):
         logging.basicConfig(level=logging.CRITICAL)
     else:
         logging.disable(logging.CRITICAL + 1)
-
 
     logfile_path["path"] = logfile
 
