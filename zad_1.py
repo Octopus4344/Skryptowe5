@@ -41,6 +41,24 @@ def file_reader(file_name):
         print("Niewlasciwa nazwa pliku")
 
 
+def file_reader_new(file_name):
+    analyzed_lines = []
+    file_content = []
+    try:
+        with open(file_name, "r") as file:
+            file.seek(0)
+            while True:
+                current_line = file.readline()
+                if current_line:
+                    analyzed_lines.append(line_analyzer(current_line))
+                    file_content.append(current_line)
+                else:
+                    break
+        return analyzed_lines, file_content
+    except FileNotFoundError:
+        print("Niewlasciwa nazwa pliku")
+
+
 def line_analyzer(line) -> dict:
     logger.debug("Przeczytano %d bajtów: %s", len(line), line)
     dictionary = dict()
@@ -103,8 +121,9 @@ def get_description(line):
 if __name__ == "__main__":
     try:
         file_name = input("Podaj nazwe pliku: ")
-        file_lines = file_reader(file_name)
-        for line in file_lines:
+        file_lines, lines = file_reader_new(file_name)
+        for dic, line in zip(file_lines, lines):
             print(line)
+            print(dic)
     except IndexError:
         print("Prosze podac nazwe pliku")
