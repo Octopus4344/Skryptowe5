@@ -63,7 +63,7 @@ class DisplayLogs(Screen):
         scroll_view = ScrollView(size_hint=(1, None), size=(50, 300))
         scroll_view.bind(size=self.adjust_height)
 
-        self.log_buttons_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        self.log_buttons_layout = GridLayout(cols=1, spacing=3, size_hint_y=None)
         self.log_buttons_layout.bind(minimum_height=layout.setter('height'))
         scroll_view.add_widget(self.log_buttons_layout)
 
@@ -78,7 +78,7 @@ class DisplayLogs(Screen):
                 self.selected_file_label.text = f"Wybrany plik: {selected_file}"
 
                 for i,log in enumerate(log_list):
-                    button = Button(text= log, size_hint_y=None, height=40)
+                    button = Button(text= log[:60], size_hint_y=None, height=40)
                     button.bind(on_press=lambda instance, index = i: self.log_button_pressed(instance, index))
                     self.log_buttons_layout.add_widget(button)
         except IOError:
