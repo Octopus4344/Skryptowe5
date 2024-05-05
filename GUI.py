@@ -13,7 +13,6 @@ from kivy.uix.scrollview import ScrollView
 from zad_1 import file_reader_new
 
 
-
 class FileSelection(Screen):
 
     def __init__(self, **kwargs):
@@ -30,15 +29,15 @@ class FileSelection(Screen):
         self.file_chooser = FileChooserListView()
         layout.add_widget(self.file_chooser)
 
-        bottom_layout = BoxLayout(size_hint=(1,None), height=100)
-        select_button = Button(text='WYBIERZ', background_color=(0.2,0.6,1,1), color=(1,1,1,1), size=(50,50), size_hint=(0.5,None))
+        bottom_layout = BoxLayout(size_hint=(1, None), height=100)
+        select_button = Button(text='WYBIERZ', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1), size=(50, 50),
+                               size_hint=(0.5, None))
         select_button.bind(on_press=self.get_log_file)
         bottom_layout.add_widget(select_button)
 
         layout.add_widget(bottom_layout)
 
         self.add_widget(layout)
-
 
     def get_log_file(self, instance):
         file = self.file_chooser.selection
@@ -57,30 +56,37 @@ class DisplayLogs(Screen):
         super(DisplayLogs, self).__init__(**kwargs)
         layout = BoxLayout(orientation='vertical')
 
-        self.selected_file_label = Label(text='Wybrany plik: ')
+        self.selected_file_label = Label(text='Tu beda slowniki: ')
         layout.add_widget(self.selected_file_label)
 
-        scroll_view = ScrollView(size_hint=(1, None), size=(50, 300))
+        logs_layout = GridLayout(cols=2)
+
+        scroll_view_layout = BoxLayout(padding=10)
+
+        scroll_view = ScrollView(size_hint=(1, None), size=(300, 600), do_scroll_x = False, do_scroll_y =True )
         scroll_view.bind(size=self.adjust_height)
 
         self.log_buttons_layout = GridLayout(cols=1, spacing=3, size_hint_y=None)
         self.log_buttons_layout.bind(minimum_height=layout.setter('height'))
         scroll_view.add_widget(self.log_buttons_layout)
+        scroll_view_layout.add_widget(scroll_view)
 
-        layout.add_widget(scroll_view)
+        self.tmp_label = Label(text='Tu beda slowniki: ')
+        logs_layout.add_widget(scroll_view_layout)
+        logs_layout.add_widget(self.tmp_label)
+        layout.add_widget(logs_layout)
 
         self.add_widget(layout)
 
-
     def process_file(self, selected_file):
         try:
-                logs_dic, log_list = file_reader_new(selected_file)
-                self.selected_file_label.text = f"Wybrany plik: {selected_file}"
+            logs_dic, log_list = file_reader_new(selected_file)
+            self.selected_file_label.text = f"Wybrany plik: {selected_file}"
 
-                for i,log in enumerate(log_list):
-                    button = Button(text= log[:60], size_hint_y=None, height=40)
-                    button.bind(on_press=lambda instance, index = i: self.log_button_pressed(instance, index))
-                    self.log_buttons_layout.add_widget(button)
+            for i, log in enumerate(log_list):
+                button = Button(text=log[:60], size_hint_y=None, height=40)
+                button.bind(on_press=lambda instance, index=i: self.log_button_pressed(instance, index))
+                self.log_buttons_layout.add_widget(button)
         except IOError:
             self.selected_file_label.text = "Wystapil blad podczas odczytu"
 
@@ -88,7 +94,7 @@ class DisplayLogs(Screen):
         print(index)
 
     def adjust_height(self, instance, height):
-        self.log_buttons_layout.height=self.log_buttons_layout.minimum_height
+        self.log_buttons_layout.height = self.log_buttons_layout.minimum_height
 
 
 class GUI(App):
