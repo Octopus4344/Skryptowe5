@@ -1,4 +1,6 @@
 from kivy.app import App
+from kivy.core.window import Window
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
@@ -9,6 +11,7 @@ from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.scrollview import ScrollView
 from zad_1 import file_reader_new
+
 
 
 class FileSelection(Screen):
@@ -57,10 +60,11 @@ class DisplayLogs(Screen):
         self.selected_file_label = Label(text='Wybrany plik: ')
         layout.add_widget(self.selected_file_label)
 
-        scroll_view = ScrollView(size_hint=(1, None))
+        scroll_view = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
         scroll_view.bind(size=self.adjust_height)
 
-        self.log_buttons_layout = BoxLayout(orientation='vertical')
+        self.log_buttons_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        self.log_buttons_layout.bind(minimum_height=layout.setter('height'))
         scroll_view.add_widget(self.log_buttons_layout)
 
         layout.add_widget(scroll_view)
