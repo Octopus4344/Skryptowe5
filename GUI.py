@@ -60,7 +60,7 @@ class DisplayLogs(Screen):
         self.selected_file_label = Label(text='Wybrany plik: ')
         layout.add_widget(self.selected_file_label)
 
-        scroll_view = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
+        scroll_view = ScrollView(size_hint=(1, None), size=(50, 300))
         scroll_view.bind(size=self.adjust_height)
 
         self.log_buttons_layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
