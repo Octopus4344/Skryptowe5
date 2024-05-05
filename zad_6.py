@@ -12,7 +12,8 @@ def brute_force_detector(logs, max_interval: timedelta, single_user_name: bool):
                                            LogMessageType.CONNECTION_CLOSED,
                                            LogMessageType.SUCCESSFUL_LOGIN) and log['IPv4']:
                 for address in log['IPv4']:
-                    unsuccessful_logs=check_IP_address(address, unsuccessful_logs, log, single_user_name, max_interval)
+                    check_IP_address(address, unsuccessful_logs, log, single_user_name,
+                                                         max_interval)
         return remove_single_attempts(unsuccessful_logs)
     except KeyError:
         print("Niewlasciwa lista logów")
@@ -39,11 +40,10 @@ def check_IP_address(address, unsuccessful_logs, log, single_user_name, max_inte
     if address_found:
         if log['time'] - unsuccessful_logs[index]['last_time_detected'] > max_interval:
             return unsuccessful_logs
-        if single_user_name:
-            if unsuccessful_logs[index]['user_name'] != log['user_name']:
-                unsuccessful_logs.append({'IPv4': address, 'count': 1, 'user_name': log['user_name'],
-                                          'last_time_detected': log['time']})
-                return unsuccessful_logs
+        if single_user_name and unsuccessful_logs[index]['user_name'] != log['user_name']:
+            unsuccessful_logs.append({'IPv4': address, 'count': 1, 'user_name': log['user_name'],
+                                      'last_time_detected': log['time']})
+            return unsuccessful_logs
         unsuccessful_logs[index]['count'] += 1
         unsuccessful_logs[index]['last_time_detected'] = log['time']
     else:
@@ -51,7 +51,6 @@ def check_IP_address(address, unsuccessful_logs, log, single_user_name, max_inte
             {'IPv4': address, 'count': 1, 'user_name': log['user_name'],
              'last_time_detected': log['time']})
     return unsuccessful_logs
-
 
 
 if __name__ == '__main__':
