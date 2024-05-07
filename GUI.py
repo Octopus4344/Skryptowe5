@@ -65,9 +65,13 @@ class DisplayLogs(Screen):
 
         self.layout = BoxLayout(orientation='vertical')
 
-        self.top_layout = BoxLayout(size_hint=(1, None), height=100)
+        self.top_layout = BoxLayout(orientation='horizontal',size_hint=(1, None), height=100, spacing=50, padding = 30)
         self.selected_file_label = Label(text='Wybrany plik: ')
         self.top_layout.add_widget(self.selected_file_label)
+        self.return_button= Button(text='WRÓĆ', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1), size=(100, 50),
+                               size_hint=(0.5, None))
+        self.return_button.bind(on_press=self.choose_a_new_file)
+        self.top_layout.add_widget(self.return_button)
         self.layout.add_widget(self.top_layout)
 
         self.filter_layout=BoxLayout(size_hint=(1, None), height=100)
@@ -184,6 +188,10 @@ class DisplayLogs(Screen):
             popup = Popup(title='Blad', content=Label(text='Nieprawidłowy plik'),
                           size_hint=(None, None), size=(200, 100))
             popup.open()
+
+    def choose_a_new_file(self, instance):
+        self.manager.get_screen('Select file').get_log_file
+        self.manager.current = 'Select file'
 
 
 
