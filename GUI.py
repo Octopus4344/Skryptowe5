@@ -14,27 +14,23 @@ from zad_1 import file_reader_new
 
 
 class FileSelection(Screen):
-
     def __init__(self, **kwargs):
         super(FileSelection, self).__init__(**kwargs)
         layout = BoxLayout(orientation='vertical')
 
         top_layout = BoxLayout(size_hint=(1, None), height=100)
-
         self.label = Label(text='Select SSH log file to analyze')
         top_layout.add_widget(self.label)
-
         layout.add_widget(top_layout)
 
         self.file_chooser = FileChooserListView()
         layout.add_widget(self.file_chooser)
 
         bottom_layout = BoxLayout(size_hint=(1, None), height=100)
-        select_button = Button(text='CONFIRM', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1), size=(50, 50),
+        select_button = Button(text='CONFIRM', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
                                size_hint=(0.5, None))
         select_button.bind(on_press=self.get_log_file)
         bottom_layout.add_widget(select_button)
-
         layout.add_widget(bottom_layout)
 
         self.add_widget(layout)
@@ -46,12 +42,16 @@ class FileSelection(Screen):
             self.manager.get_screen('Logs').process_file(file)
             self.manager.current = 'Logs'
         else:
+            # TODO: change to popup
+            # self.show_error_popup("No file selected")
             file = 'plik.txt'
             self.manager.get_screen('Logs').process_file(file)
             self.manager.current = 'Logs'
-            # popup = Popup(title='Blad', content=Label(text='Nie wybrano żadnego pliku'),
-            #               size_hint=(None, None), size=(200, 100))
-            # popup.open()
+
+    @staticmethod
+    def show_error_popup(message):
+        popup = Popup(title='Error', content=Label(text=message), size_hint=(None, None), size=(200, 100))
+        popup.open()
 
 
 class DisplayLogs(Screen):
