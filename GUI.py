@@ -93,10 +93,6 @@ class DisplayLogs(Screen):
         self.host_name_layout = BoxLayout(orientation='horizontal')
         self.hostname_key = Label(text='Hostname: ')
         self.hostname_value = Label()
-        # self.hostname_value.bind(size=self.hostname_value.setter('size'), pos=self.hostname_value.setter('pos'))
-        # with self.hostname_value.canvas.before:
-        #     Color(0.2, 0.6, 1, 1)
-        #     Rectangle(pos=self.hostname_value.pos, size=self.hostname_value.size)
 
         self.host_name_layout.add_widget(self.hostname_key)
         self.host_name_layout.add_widget(self.hostname_value)
@@ -141,6 +137,15 @@ class DisplayLogs(Screen):
         self.bottom_layout = BoxLayout(orientation='horizontal', height=300)
         self.layout.add_widget(self.bottom_layout)
         # to jest layout dp przycisków previous i next
+        self.previous_button = Button(text='Previous Log', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
+                                      size_hint=(0.5, None))
+        self.previous_button.bind(on_press=self.previous_log)
+        self.bottom_layout.add_widget(self.previous_button)
+
+        self.next_button = Button(text='Next Log', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
+                                  size_hint=(0.5, None))
+        self.next_button.bind(on_press=self.next_log)
+        self.bottom_layout.add_widget(self.next_button)
 
         self.add_widget(self.layout)
 
@@ -165,6 +170,16 @@ class DisplayLogs(Screen):
         self.curr_index = index
         self.update_dict()
 
+    def next_log(self, instance):
+        if self.curr_index < len(self.list_of_logs) - 1:
+            self.curr_index += 1
+            self.update_dict()
+
+    def previous_log(self, instance):
+        if self.curr_index > 0:
+            self.curr_index -= 1
+            self.update_dict()
+
     def adjust_height(self, instance, height):
         self.log_buttons_layout.height = self.log_buttons_layout.minimum_height
 
@@ -177,7 +192,7 @@ class DisplayLogs(Screen):
             if curr['IPv4']:
                 self.ip_value.text = curr['IPv4'][0]
             else:
-                self.ip_value.text = 'brak'
+                self.ip_value.text = 'none'
             self.time_value.text = curr['time'].strftime('%Y-%m-%d %H:%M:%S')
         except KeyError:
             popup = Popup(title='Error', content=Label(text='Not supported log format'),
@@ -185,7 +200,6 @@ class DisplayLogs(Screen):
             popup.open()
 
     def choose_a_new_file(self, instance):
-        # self.manager.get_screen('Select file').get_log_file
         self.manager.current = 'Select file'
 
 
