@@ -70,6 +70,7 @@ def line_analyzer(line) -> dict:
     dictionary['IPv4'] = get_ipv4s_from_log(dictionary)
     dictionary['user_name'] = get_user_from_log(dictionary)
     dictionary['message_type'] = get_message_type(dictionary['description'], logger)
+    dictionary['content'] = line
     return dictionary
 
 

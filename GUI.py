@@ -1,4 +1,5 @@
 import os.path
+from datetime import datetime
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -9,8 +10,9 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.textinput import TextInput
 
-from zad_1 import file_reader_new
+from zad_1 import file_reader
 
 
 def show_error_popup(message):
@@ -58,8 +60,7 @@ class DisplayLogs(Screen):
     def __init__(self, **kwargs):
         super(DisplayLogs, self).__init__(**kwargs)
         self.curr_index = 0
-        self.list_of_logs = []
-        self.list_of_dicts = []
+        self.logs = []
 
         self.layout = BoxLayout(orientation='vertical')
 
@@ -75,6 +76,17 @@ class DisplayLogs(Screen):
         self.filter_layout = BoxLayout(size_hint=(1, None), height=100)
         self.layout.add_widget(self.filter_layout)
         # tutaj będzie pokazane filtrowanie i przyciski do sterowania nim
+
+        self.date_range_layout = BoxLayout(size_hint=(1, None), height=100, spacing=10, padding=30)
+        self.start_date_input = TextInput(hint_text='Start Date (DD-MM)', multiline=False)
+        self.end_date_input = TextInput(hint_text='End Date (DD-MM)', multiline=False)
+        self.apply_filter_button = Button(text='Apply Filter', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
+                                          size=(100, 50), size_hint=(0.5, None))
+        self.apply_filter_button.bind(on_press=self.apply_date_filter)
+        self.date_range_layout.add_widget(self.start_date_input)
+        self.date_range_layout.add_widget(self.end_date_input)
+        self.date_range_layout.add_widget(self.apply_filter_button)
+        self.layout.add_widget(self.date_range_layout)
 
         self.logs_layout = GridLayout(cols=2, spacing=25, height=400)
 
@@ -151,14 +163,23 @@ class DisplayLogs(Screen):
 
     def process_file(self, selected_file):
         try:
-            logs_dic, log_list = file_reader_new(os.path.basename(selected_file))
+            logs = file_reader(os.path.basename(selected_file))
             self.selected_file_label.text = f"Current file: {selected_file}"
-            self.list_of_logs = log_list
-            self.list_of_dicts = logs_dic
+
+            # try:
+            #     start_date = datetime.strptime(start_date, '%d-%m')
+            #     end_date = datetime.strptime(end_date, '%d-%m')
+            # except ValueError:
+            #     show_error_popup("Provide valid date in DD-MM format")
+
+            # logs = [log for log in logs if start_date <= log['time'] <= end_date]
+
+            self.logs = logs
             self.curr_index = 0
 
-            for i, log in enumerate(log_list):
-                button = Button(text=log[:45] + "...", size_hint_y=None, height=40, background_color=(0.2, 0.6, 1, 1),
+            for i, log in enumerate(logs):
+                button = Button(text=log['content'][:45] + '...', size_hint_y=None, height=40,
+                                background_color=(0.2, 0.6, 1, 1),
                                 color=(1, 1, 1, 1))
                 button.bind(on_press=lambda instance, index=i: self.log_button_pressed(instance, index))
                 self.log_buttons_layout.add_widget(button)
@@ -171,7 +192,7 @@ class DisplayLogs(Screen):
         self.update_dict()
 
     def next_log(self, instance):
-        if self.curr_index < len(self.list_of_logs) - 1:
+        if self.curr_index < len(self.logs) - 1:
             self.curr_index += 1
             self.update_dict()
 
@@ -185,7 +206,7 @@ class DisplayLogs(Screen):
 
     def update_dict(self):
         try:
-            curr = self.list_of_dicts[self.curr_index]
+            curr = self.logs[self.curr_index]
             self.hostname_value.text = curr['host_name']
             self.app_component_value.text = curr['app_component']
             self.pid_value.text = str(curr['PID'])
@@ -193,14 +214,39 @@ class DisplayLogs(Screen):
                 self.ip_value.text = curr['IPv4'][0]
             else:
                 self.ip_value.text = 'none'
-            self.time_value.text = curr['time'].strftime('%Y-%m-%d %H:%M:%S')
+            self.time_value.text = curr['time'].strftime('%d %B %H:%M:%S')
         except KeyError:
-            popup = Popup(title='Error', content=Label(text='Not supported log format'),
-                          size_hint=(None, None), size=(200, 100))
-            popup.open()
+            show_error_popup('Unsupported log format')
 
     def choose_a_new_file(self, instance):
         self.manager.current = 'Select file'
+
+    def apply_date_filter(self, instance):
+        start_date_str = self.start_date_input.text.strip()
+        end_date_str = self.end_date_input.text.strip()
+
+        if start_date_str and end_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%d-%m')
+                end_date = datetime.strptime(end_date_str, '%d-%m')
+                filtered_logs = [log for log in self.logs if start_date <= log['time'] <= end_date]
+                self.update_logs_layout(filtered_logs)
+            except ValueError:
+                show_error_popup("Invalid date format. Please use DD-MM.")
+        else:
+            show_error_popup("Please provide both start and end dates.")
+
+    def update_logs_layout(self, logs):
+        self.log_buttons_layout.clear_widgets()
+        for i, log in enumerate(logs):
+            button = Button(text=log['content'][:45] + "...", size_hint_y=None, height=40, background_color=(0.2, 0.6, 1, 1),
+                            color=(1, 1, 1, 1))
+            button.bind(on_press=lambda instance, index=i: self.log_button_pressed(instance, index))
+            self.log_buttons_layout.add_widget(button)
+        self.curr_index = 0
+        self.logs = logs
+        if not logs:
+            show_error_popup("No logs found in the selected date range.")
 
 
 class GUI(App):
