@@ -89,7 +89,7 @@ class DisplayLogs(Screen):
         self.date_range_layout.add_widget(self.apply_filter_button)
         self.layout.add_widget(self.date_range_layout)
 
-        self.logs_layout = GridLayout(cols=2, spacing=25, height=400)
+        self.logs_layout = GridLayout(cols=2, spacing=25, height=400, padding=10)
 
         self.scroll_view_layout = BoxLayout(padding=10)
 
