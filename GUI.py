@@ -78,7 +78,7 @@ class DisplayLogs(Screen):
         self.start_date_input = TextInput(hint_text='Start Date (DD-MM)', multiline=False)
         self.end_date_input = TextInput(hint_text='End Date (DD-MM)', multiline=False)
         self.apply_filter_button = Button(text='Apply Filter', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
-                                          size=(100, 50), size_hint=(0.5, None))
+                                          size=(100, 40), size_hint=(0.5, None))
         self.apply_filter_button.bind(on_press=self.apply_date_filter)
         self.filter_layout.add_widget(self.start_date_input)
         self.filter_layout.add_widget(self.end_date_input)
