@@ -23,24 +23,24 @@ def show_error_popup(message):
 class FileSelection(Screen):
     def __init__(self, **kwargs):
         super(FileSelection, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
+        wrapper = BoxLayout(orientation='vertical')
 
-        top_layout = BoxLayout(size_hint=(1, None), height=100)
+        top_panel = BoxLayout(size_hint=(1, None), height=100)
         self.label = Label(text='Select SSH log file to analyze')
-        top_layout.add_widget(self.label)
-        layout.add_widget(top_layout)
+        top_panel.add_widget(self.label)
+        wrapper.add_widget(top_panel)
 
         self.file_chooser = FileChooserListView()
-        layout.add_widget(self.file_chooser)
+        wrapper.add_widget(self.file_chooser)
 
-        bottom_layout = BoxLayout(size_hint=(1, None), height=100)
-        select_button = Button(text='CONFIRM', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
+        footer = BoxLayout(size_hint=(1, None), height=100)
+        select_button = Button(text='Select', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
                                size_hint=(0.5, None))
         select_button.bind(on_press=self.get_log_file)
-        bottom_layout.add_widget(select_button)
-        layout.add_widget(bottom_layout)
+        footer.add_widget(select_button)
+        wrapper.add_widget(footer)
 
-        self.add_widget(layout)
+        self.add_widget(wrapper)
 
     def get_log_file(self, instance):
         file = self.file_chooser.selection
@@ -67,7 +67,7 @@ class DisplayLogs(Screen):
         self.top_layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=100, spacing=50, padding=30)
         self.selected_file_label = Label(text='Current file: ')
         self.top_layout.add_widget(self.selected_file_label)
-        self.return_button = Button(text='BACK', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1), size=(100, 50),
+        self.return_button = Button(text='Back', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1), size=(100, 50),
                                     size_hint=(0.5, None))
         self.return_button.bind(on_press=self.choose_a_new_file)
         self.top_layout.add_widget(self.return_button)
@@ -252,10 +252,8 @@ class DisplayLogs(Screen):
 class GUI(App):
     def build(self):
         screen_manager = ScreenManager()
-
         screen_manager.add_widget(FileSelection(name='Select file'))
         screen_manager.add_widget(DisplayLogs(name='Logs'))
-
         return screen_manager
 
 
