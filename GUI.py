@@ -86,11 +86,11 @@ class DisplayLogs(Screen):
         self.layout.add_widget(self.filter_layout)
 
         # self.logs_layout = GridLayout(cols=2, spacing=25, height=400, padding=10)
-        self.logs_layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=300, padding=10)
+        self.logs_layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=400, padding=10)
 
         self.scroll_view_layout = BoxLayout(padding=10)
 
-        self.scroll_view = ScrollView(size_hint=(1, None), size=(280, 280), do_scroll_x=False, do_scroll_y=True, bar_width=10, scroll_type=['bars'])
+        self.scroll_view = ScrollView(size_hint=(1, None), size=(380, 380), do_scroll_x=False, do_scroll_y=True, bar_width=10, scroll_type=['bars'])
         self.scroll_view.bind(size=self.adjust_height)
 
         self.log_buttons_layout = GridLayout(cols=1, spacing=3, size_hint_y=None)
