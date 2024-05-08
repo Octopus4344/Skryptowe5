@@ -2,6 +2,7 @@ import os.path
 from datetime import datetime
 
 from kivy.app import App
+from kivy.graphics import Color, Rectangle
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.filechooser import FileChooserListView
@@ -10,9 +11,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.scrollview import ScrollView
-from kivy.graphics import Color, Rectangle
 from kivy.uix.textinput import TextInput
-
 
 from zad_1 import file_reader
 
@@ -75,26 +74,23 @@ class DisplayLogs(Screen):
         self.top_layout.add_widget(self.return_button)
         self.layout.add_widget(self.top_layout)
 
-        self.filter_layout = BoxLayout(size_hint=(1, None), height=100)
-        self.layout.add_widget(self.filter_layout)
-        # tutaj będzie pokazane filtrowanie i przyciski do sterowania nim
-
-        self.date_range_layout = BoxLayout(size_hint=(1, None), height=100, spacing=10, padding=30)
+        self.filter_layout = BoxLayout(size_hint=(1, None), height=100, spacing=10, padding=30)
         self.start_date_input = TextInput(hint_text='Start Date (DD-MM)', multiline=False)
         self.end_date_input = TextInput(hint_text='End Date (DD-MM)', multiline=False)
         self.apply_filter_button = Button(text='Apply Filter', background_color=(0.2, 0.6, 1, 1), color=(1, 1, 1, 1),
                                           size=(100, 50), size_hint=(0.5, None))
         self.apply_filter_button.bind(on_press=self.apply_date_filter)
-        self.date_range_layout.add_widget(self.start_date_input)
-        self.date_range_layout.add_widget(self.end_date_input)
-        self.date_range_layout.add_widget(self.apply_filter_button)
-        self.layout.add_widget(self.date_range_layout)
+        self.filter_layout.add_widget(self.start_date_input)
+        self.filter_layout.add_widget(self.end_date_input)
+        self.filter_layout.add_widget(self.apply_filter_button)
+        self.layout.add_widget(self.filter_layout)
 
-        self.logs_layout = GridLayout(cols=2, spacing=25, height=400, padding=10)
+        # self.logs_layout = GridLayout(cols=2, spacing=25, height=400, padding=10)
+        self.logs_layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=300, padding=10)
 
         self.scroll_view_layout = BoxLayout(padding=10)
 
-        self.scroll_view = ScrollView(size_hint=(1, None), size=(300, 300), do_scroll_x=False, do_scroll_y=True)
+        self.scroll_view = ScrollView(size_hint=(1, None), size=(280, 300), do_scroll_x=False, do_scroll_y=True)
         self.scroll_view.bind(size=self.adjust_height)
 
         self.log_buttons_layout = GridLayout(cols=1, spacing=3, size_hint_y=None)
@@ -112,7 +108,7 @@ class DisplayLogs(Screen):
         self.host_name_layout.add_widget(self.hostname_value)
         self.detail_view.add_widget(self.host_name_layout)
 
-        #self.app_component_and_pid_layout = GridLayout(cols=2, spacing=1)
+        # self.app_component_and_pid_layout = GridLayout(cols=2, spacing=1)
 
         self.app_component_layout = BoxLayout(orientation='horizontal')
         self.app_component_key = Label(text='App component:')
@@ -128,7 +124,7 @@ class DisplayLogs(Screen):
         self.pid_layout.add_widget(self.pid_value)
         self.detail_view.add_widget(self.pid_layout)
 
-        #self.detail_view.add_widget(self.app_component_and_pid_layout)
+        # self.detail_view.add_widget(self.app_component_and_pid_layout)
 
         self.ip_layout = BoxLayout(orientation='horizontal')
         self.ip_key = Label(text='IP address: ')
@@ -164,8 +160,8 @@ class DisplayLogs(Screen):
         self.add_widget(self.layout)
 
         with self.detail_view.canvas.before:
-            Color(19/255, 53/255, 88/255, 1)
-            self.detail_background=Rectangle(pos=(self.detail_view.x, self.detail_view.y), size =self.detail_view.size)
+            Color(19 / 255, 53 / 255, 88 / 255, 1)
+            self.detail_background = Rectangle(pos=(self.detail_view.x, self.detail_view.y), size=self.detail_view.size)
 
         self.detail_view.bind(size=self.update_detail_background, pos=self.update_detail_background)
 
@@ -247,7 +243,8 @@ class DisplayLogs(Screen):
     def update_logs_layout(self, logs):
         self.log_buttons_layout.clear_widgets()
         for i, log in enumerate(logs):
-            button = Button(text=log['content'][:45] + "...", size_hint_y=None, height=40, background_color=(0.2, 0.6, 1, 1),
+            button = Button(text=log['content'][:45] + "...", size_hint_y=None, height=40,
+                            background_color=(0.2, 0.6, 1, 1),
                             color=(1, 1, 1, 1))
             button.bind(on_press=lambda instance, index=i: self.log_button_pressed(instance, index))
             self.log_buttons_layout.add_widget(button)
@@ -257,9 +254,9 @@ class DisplayLogs(Screen):
             show_error_popup("No logs found in the selected date range.")
 
     def update_detail_background(self, instance, value):
-        self.detail_view.y=self.scroll_view.y
-        self.detail_background.pos=self.detail_view.x, self.detail_view.y
-        self.detail_background.size=self.detail_view.size
+        self.detail_view.y = self.scroll_view.y
+        self.detail_background.pos = self.detail_view.x, self.detail_view.y
+        self.detail_background.size = self.detail_view.size
 
 
 class GUI(App):
