@@ -90,7 +90,7 @@ class DisplayLogs(Screen):
 
         self.scroll_view_layout = BoxLayout(padding=10)
 
-        self.scroll_view = ScrollView(size_hint=(1, None), size=(280, 300), do_scroll_x=False, do_scroll_y=True)
+        self.scroll_view = ScrollView(size_hint=(1, None), size=(280, 280), do_scroll_x=False, do_scroll_y=True)
         self.scroll_view.bind(size=self.adjust_height)
 
         self.log_buttons_layout = GridLayout(cols=1, spacing=3, size_hint_y=None)
