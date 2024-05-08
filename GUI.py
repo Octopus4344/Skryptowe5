@@ -13,6 +13,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.graphics import Color, Rectangle
 from kivy.uix.textinput import TextInput
 
+
 from zad_1 import file_reader
 
 
@@ -93,7 +94,7 @@ class DisplayLogs(Screen):
 
         self.scroll_view_layout = BoxLayout(padding=10)
 
-        self.scroll_view = ScrollView(size_hint=(1, None), size=(300, 400), do_scroll_x=False, do_scroll_y=True)
+        self.scroll_view = ScrollView(size_hint=(1, None), size=(300, 300), do_scroll_x=False, do_scroll_y=True)
         self.scroll_view.bind(size=self.adjust_height)
 
         self.log_buttons_layout = GridLayout(cols=1, spacing=3, size_hint_y=None)
