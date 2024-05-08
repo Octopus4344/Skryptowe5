@@ -9,6 +9,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.scrollview import ScrollView
+from kivy.graphics import Color, Rectangle
 
 from zad_1 import file_reader_new
 
@@ -88,7 +89,7 @@ class DisplayLogs(Screen):
         self.scroll_view.add_widget(self.log_buttons_layout)
         self.scroll_view_layout.add_widget(self.scroll_view)
 
-        self.detail_view = BoxLayout(orientation='vertical', height=400)
+        self.detail_view = BoxLayout(orientation='vertical', height=400, padding=10)
 
         self.host_name_layout = BoxLayout(orientation='horizontal')
         self.hostname_key = Label(text='Hostname: ')
@@ -98,23 +99,23 @@ class DisplayLogs(Screen):
         self.host_name_layout.add_widget(self.hostname_value)
         self.detail_view.add_widget(self.host_name_layout)
 
-        self.app_component_and_pid_layout = GridLayout(cols=2, spacing=3)
+        #self.app_component_and_pid_layout = GridLayout(cols=2, spacing=1)
 
         self.app_component_layout = BoxLayout(orientation='horizontal')
-        self.app_component_key = Label(text='App component: ')
+        self.app_component_key = Label(text='App component:')
         self.app_component_value = Label()
         self.app_component_layout.add_widget(self.app_component_key)
         self.app_component_layout.add_widget(self.app_component_value)
-        self.app_component_and_pid_layout.add_widget(self.app_component_layout)
+        self.detail_view.add_widget(self.app_component_layout)
 
         self.pid_layout = BoxLayout(orientation='horizontal')
         self.pid_key = Label(text='PID: ')
         self.pid_value = Label()
         self.pid_layout.add_widget(self.pid_key)
         self.pid_layout.add_widget(self.pid_value)
-        self.app_component_and_pid_layout.add_widget(self.pid_layout)
+        self.detail_view.add_widget(self.pid_layout)
 
-        self.detail_view.add_widget(self.app_component_and_pid_layout)
+        #self.detail_view.add_widget(self.app_component_and_pid_layout)
 
         self.ip_layout = BoxLayout(orientation='horizontal')
         self.ip_key = Label(text='IP address: ')
@@ -148,6 +149,12 @@ class DisplayLogs(Screen):
         self.bottom_layout.add_widget(self.next_button)
 
         self.add_widget(self.layout)
+
+        with self.detail_view.canvas.before:
+            Color(19/255, 53/255, 88/255, 1)
+            self.detail_background=Rectangle(pos=(self.detail_view.x, self.detail_view.y), size =self.detail_view.size)
+
+        self.detail_view.bind(size=self.update_detail_background, pos=self.update_detail_background)
 
     def process_file(self, selected_file):
         try:
@@ -201,6 +208,11 @@ class DisplayLogs(Screen):
 
     def choose_a_new_file(self, instance):
         self.manager.current = 'Select file'
+
+    def update_detail_background(self, instance, value):
+        self.detail_view.y=self.scroll_view.y
+        self.detail_background.pos=self.detail_view.x, self.detail_view.y
+        self.detail_background.size=self.detail_view.size
 
 
 class GUI(App):
