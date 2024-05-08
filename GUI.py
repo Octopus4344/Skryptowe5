@@ -169,20 +169,11 @@ class DisplayLogs(Screen):
         try:
             logs = file_reader(os.path.basename(selected_file))
             self.selected_file_label.text = f"Current file: {selected_file}"
-
-            # try:
-            #     start_date = datetime.strptime(start_date, '%d-%m')
-            #     end_date = datetime.strptime(end_date, '%d-%m')
-            # except ValueError:
-            #     show_error_popup("Provide valid date in DD-MM format")
-
-            # logs = [log for log in logs if start_date <= log['time'] <= end_date]
-
             self.logs = logs
             self.curr_index = 0
 
             for i, log in enumerate(logs):
-                button = Button(text=log['content'][:45] + '...', size_hint_y=None, height=40,
+                button = Button(text=log['description'][:45] + '...', size_hint_y=None, height=40,
                                 background_color=(0.2, 0.6, 1, 1),
                                 color=(1, 1, 1, 1))
                 button.bind(on_press=lambda instance, index=i: self.log_button_pressed(instance, index))
