@@ -13,6 +13,11 @@ from kivy.uix.scrollview import ScrollView
 from zad_1 import file_reader_new
 
 
+def show_error_popup(message):
+    popup = Popup(title='Error', content=Label(text=message), size_hint=(None, None), size=(400, 150))
+    popup.open()
+
+
 class FileSelection(Screen):
     def __init__(self, **kwargs):
         super(FileSelection, self).__init__(**kwargs)
@@ -43,15 +48,10 @@ class FileSelection(Screen):
             self.manager.current = 'Logs'
         else:
             # TODO: change to popup
-            # self.show_error_popup("No file selected")
+            # show_error_popup("No file selected")
             file = 'plik.txt'
             self.manager.get_screen('Logs').process_file(file)
             self.manager.current = 'Logs'
-
-    @staticmethod
-    def show_error_popup(message):
-        popup = Popup(title='Error', content=Label(text=message), size_hint=(None, None), size=(200, 100))
-        popup.open()
 
 
 class DisplayLogs(Screen):
@@ -59,7 +59,7 @@ class DisplayLogs(Screen):
         super(DisplayLogs, self).__init__(**kwargs)
         self.curr_index = 0
         self.list_of_logs = []
-        self.list_of_dics = []
+        self.list_of_dicts = []
 
         self.layout = BoxLayout(orientation='vertical')
 
@@ -154,7 +154,7 @@ class DisplayLogs(Screen):
             logs_dic, log_list = file_reader_new(os.path.basename(selected_file))
             self.selected_file_label.text = f"Current file: {selected_file}"
             self.list_of_logs = log_list
-            self.list_of_dics = logs_dic
+            self.list_of_dicts = logs_dic
             self.curr_index = 0
 
             for i, log in enumerate(log_list):
@@ -185,7 +185,7 @@ class DisplayLogs(Screen):
 
     def update_dict(self):
         try:
-            curr = self.list_of_dics[self.curr_index]
+            curr = self.list_of_dicts[self.curr_index]
             self.hostname_value.text = curr['host_name']
             self.app_component_value.text = curr['app_component']
             self.pid_value.text = str(curr['PID'])
